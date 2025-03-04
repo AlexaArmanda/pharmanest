@@ -5,6 +5,7 @@ import { FaRegUser } from "react-icons/fa";
 import { GrCart } from "react-icons/gr";
 import SearchBox from './SearchBox';
 import Navigation from './Navigation';
+
 const Header = () => {
 
     return(
