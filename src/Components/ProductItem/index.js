@@ -2,9 +2,9 @@ import { FaRegHeart } from "react-icons/fa6";
 import Button from "@mui/material/Button";
 import Rating from "@mui/material/Rating";
 
-const ProductItem = () => {
+const ProductItem = (props) => {
   return (
-    <div className="item productItem">
+    <div className={`productItem ${props.itemView}`}>
       <div className="imgWrapper">
         <img
           src="https://www.ecomagazin.ro/wp-content/uploads/2013/01/supa-la-plic.jpg"
