@@ -3,7 +3,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
-
+import  image1 from "../../assets/images/immunity.png";
 const HomeCat = () => {
   return (
     <section className="homeCat">
@@ -21,8 +21,7 @@ const HomeCat = () => {
           modules={[Navigation]}
           className="mySwiper"
           breakpoints={{
-            320: { slidesPerView: 2 }, 
-            480: { slidesPerView: 2 }, 
+            320: { slidesPerView: 3 }, 
             768: { slidesPerView: 4 },  
             1000: { slidesPerView: 6 }, 
             1280: { slidesPerView: 8 }, 
@@ -30,7 +29,7 @@ const HomeCat = () => {
         >
             <SwiperSlide>
             <div className="item text-center">
-                <img src="https://media.farmaciatei.ro/gallery/26542/small/crema-antirid-cu-extrate-de-musetel-galbenele-si-sunatoare-100-ml-herbagen-3844.webp" />
+                <img src={image1} />
                 <h4>Immunity Boost</h4>
             </div>
             </SwiperSlide>

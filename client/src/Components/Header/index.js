@@ -22,12 +22,7 @@ const Header = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.Price * item.quantity,
-    0
-  );
   const totalItemsInCart = cart.reduce((sum, item) => sum + item.quantity, 0);
-
 
   return (
     <div className="headerWrapper">
@@ -42,77 +37,82 @@ const Header = () => {
       <header className="header">
         <div className="container">
           <div className="row">
-          {!isMobile && (
-            <div className="logoWrapper d-flex col-sm-12">
-              <Link to={"/"}>
-                <img src={Logo} alt="Logo"></img>
-              </Link>
-            
+            {!isMobile && (
+              <div className="logoWrapper d-flex col-sm-12">
+                <Link to={"/"}>
+                  <img src={Logo} alt="Logo"></img>
+                </Link>
 
-            
-              <div className="logoWrapper col-sm-10 d-flex align-items-center">
-                <SearchBox />
-                <div className="part3 d-flex align-items-center ml-auto">
-                  {/* {
+                <div className="logoWrapper col-sm-11 d-flex align-items-center">
+                  <SearchBox />
+                  <div className="part3 d-flex ml-auto">
+                    {/* {
                                     context.isLoggedin!==true ? <Button className='circle mr-3'><FaRegUser /></Button> : <Link to={'/profile'}><Button className='circle mr-3'><FaRegUser /></Button></Link>                               
                                     } */}
-                  <Button onClick={() => navigate("/signIn")} className="circle mr-3">
-                    <FaRegUser />
-                  </Button>
-                  <div className="ml-auto cartTab d-flex align-items-center">
-                    <span className="price">{totalAmount}</span>
-                    <div className="position-relative ml-2">
-                      <Button className="circle ml-2" onClick={() => navigate("/cart")}>
-                        <GrCart />
-                      </Button>
-                      <span className="count d-flex align-items-center justify-content-center">
-                        1
-                      </span>
+                    <Button
+                      onClick={() => navigate("/signIn")}
+                      className="circle mr-3"
+                    >
+                      <FaRegUser />
+                    </Button>
+                    <div className="ml-auto cartTab d-flex align-items-center">
+                      <div className="position-relative ml-2">
+                        <Button
+                          className="circle ml-2"
+                          onClick={() => navigate("/cart")}
+                        >
+                          <GrCart />
+                        </Button>
+                        {totalItemsInCart > 0 && (
+                          <span className="count d-flex align-items-center justify-content-center">
+                            {totalItemsInCart}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              </div>
             )}
-            
 
-{isMobile && (
-     <div className="logoWrapper d-flex col-sm-12">
-     <Link to={"/"}>
-       <img src={Logo} alt="Logo"></img>
-     </Link>
-   
- 
- <div className="part3 d-flex align-items-center ml-auto">
-   {/* {
+            {isMobile && (
+              <div className="logoWrapper d-flex col-sm-12">
+                <Link to={"/"}>
+                  <img src={Logo} alt="Logo"></img>
+                </Link>
+
+                <div className="part3 d-flex align-items-center ml-auto">
+                  {/* {
                      context.isLoggedin!==true ? <Button className='circle mr-3'><FaRegUser /></Button> : <Link to={'/profile'}><Button className='circle mr-3'><FaRegUser /></Button></Link>                               
                      } */}
-   <Button className="circle mr-3">
-     <FaRegUser />
-   </Button>
-   <div className="ml-auto cartTab d-flex align-items-center">
-      <span className="price">${totalAmount.toFixed(2)}</span>
-      <div className="position-relative ml-2">
-        <Button className="circle ml-2" onClick={() => navigate("/cart")}>
-          <GrCart />
-        </Button>
-        <span className="count d-flex align-items-center justify-content-center">
-          {totalItemsInCart} 
-        </span>
-      </div>
-    </div>
-   
+                  <Button
+                      onClick={() => navigate("/signIn")}
+                      className="circle mr-3"
+                    >
+                      <FaRegUser />
+                    </Button>
+                  <div className="ml-auto cartTab d-flex align-items-center">
+                  <div className="position-relative ml-2">
+                        <Button
+                          className="circle ml-2"
+                          onClick={() => navigate("/cart")}
+                        >
+                          <GrCart />
+                        </Button>
+                        {totalItemsInCart > 0 && (
+                          <span className="count d-flex align-items-center justify-content-center">
+                            {totalItemsInCart}
+                          </span>
+                        )}
+                      </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-
-
- </div>
-
-
- </div>
- 
-)}
-
-<div className="visibleSM"><SearchBox/></div>
+            <div className="visibleSM">
+              <SearchBox />
+            </div>
           </div>
         </div>
       </header>

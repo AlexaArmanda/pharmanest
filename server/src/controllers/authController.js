@@ -3,15 +3,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 
-// JWT Secret Key
 const JWT_SECRET = "my_pharmanest_key";
 
-// User Registration
 const registerUser = async (req, res) => {
   const { FullName, Email, Password, Phone, Address} = req.body;
 
   try {
-    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -19,7 +16,6 @@ const registerUser = async (req, res) => {
 
     const pool = await poolPromise;
 
-    // Check if user already exists
     const existingUser = await pool
       .request()
       .input("Email", sql.NVarChar, Email)
@@ -29,11 +25,9 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash Password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(Password, salt);
 
-    // Insert new user
     await pool
       .request()
       .input("FullName", sql.NVarChar, FullName)
@@ -51,14 +45,12 @@ const registerUser = async (req, res) => {
   }
 };
 
-// User Login
 const loginUser = async (req, res) => {
   const { Email, Password } = req.body;
 
   try {
     const pool = await poolPromise;
 
-    // Check if user exists
     const result = await pool
       .request()
       .input("Email", sql.NVarChar, Email)
@@ -70,13 +62,11 @@ const loginUser = async (req, res) => {
 
     const user = result.recordset[0];
 
-    // Compare passwords
     const isMatch = await bcrypt.compare(Password, user.PasswordHash);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT Token
     const token = jwt.sign(
       { UserID: user.UserID },
       JWT_SECRET,

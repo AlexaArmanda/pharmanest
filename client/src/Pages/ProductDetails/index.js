@@ -99,19 +99,16 @@ const ProductDetails = () => {
                                     <FaHeart />
                                 </Button>
                             </Tooltip>
-                            <Tooltip title="Compare" placement="top-start">
-                                <Button className="btn btn-cmp">
-                                    <IoGitCompareOutline />
-                                </Button>
-                            </Tooltip>
+                        
                         </div>
+                        <div className="desc">{product.Description}</div>
                     </div>
                 </div>
 
                 <div className="card mt-5 p-5 detailsPageTabs">
                     <div className="customTabs">
                         <ul className="list list-inline">
-                            {["description", "additional-info", "reviews"].map((tab) => (
+                            {["Description", "PIL", "Reviews"].map((tab) => (
                                 <li className="list-inline-item" key={tab}>
                                     <button
                                         className={`tab-btn ${activeTab === tab ? "active" : ""}`}
@@ -124,15 +121,15 @@ const ProductDetails = () => {
                         </ul>
                     </div>
 
-                    {activeTab === "description" && (
+                    {activeTab === "Description" && (
                         <div className="tabContent">
-                            <p>{product.Description || "No description available."}</p>
+                            {/* <p>{product.Description || "No description available."}</p> */}
                         </div>
                     )}
 
-                    {activeTab === "additional-info" && (
+                    {activeTab === "PIL" && (
                         <div className="tabContent">
-                            <table>
+                            {/* <table>
                                 <thead>
                                     <tr>
                                         <th>Mineral</th>
@@ -153,11 +150,11 @@ const ProductDetails = () => {
                                         <td>50mg</td>
                                     </tr>
                                 </tbody>
-                            </table>
+                            </table> */}
                         </div>
                     )}
 
-                    {activeTab === "reviews" && (
+                    {activeTab === "Reviews" && (
                         <div className="tabContent">
                             <h3>Customer questions & answers</h3>
                             <p>No reviews yet.</p>

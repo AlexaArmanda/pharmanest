@@ -44,10 +44,21 @@ const SearchBox = () => {
 
       {suggestions.length > 0 && (
         <ul className="suggestions">
-          {suggestions.map((product) => (
-            <li key={product.Name}>{product.Name}</li>
-          ))}
-        </ul>
+        {suggestions.map((product) => (
+          <li 
+            key={product.Name} 
+            onClick={() => {
+              setQuery(product.Name);
+              setSuggestions([]);
+              navigate(`/search?query=${product.Name}`);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            {product.Name}
+          </li>
+        ))}
+      </ul>
+      
       )}
     </div>
   );

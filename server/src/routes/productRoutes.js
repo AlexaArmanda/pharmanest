@@ -1,17 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const { getProducts, getProductById, searchProducts, getProductsByCategory } = require("../controllers/productController");
+const { getProducts, getProductById, searchProducts,getBrands, getProductsByCategory, getFilteredProductsByCategory} = require("../controllers/productController");
 
-// ✅ Get all products
 router.get("/", getProducts);
 
-// ✅ Search products
 router.get("/search", searchProducts);
-
-// ✅ Get products by category (placed BEFORE /:id to avoid conflicts)
+router.get('/brands', getBrands);
 router.get("/category/:categoryId", getProductsByCategory);
+router.get('/category/:id/filtered/:filters', getFilteredProductsByCategory);
 
-// ✅ Get a single product by ID
 router.get("/:id", getProductById);
+
+
 
 module.exports = router;

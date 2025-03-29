@@ -3,6 +3,8 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CheckoutModal from '../../Components/CheckoutModal';
 import { CiTrash } from "react-icons/ci";
+import { FaPlus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -18,21 +20,36 @@ const Cart = () => {
     }
   }, []);
 
-  const removeFromCart = (productID) => {
+  const increaseQuantity = (productID) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.map((item) =>
+        item.ProductID === productID ? { ...item, quantity: item.quantity + 1 } : item
+      );
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
+  const decreaseQuantity = (productID) => {
     setCart((prevCart) => {
       const updatedCart = prevCart
-        .map((item) => {
-          if (item.ProductID === productID) {
-            if (item.quantity > 1) {
-              return { ...item, quantity: item.quantity - 1 };
-            } else {
-              return null;
-            }
-          }
-          return item;
-        })
+        .map((item) =>
+          item.ProductID === productID
+            ? item.quantity > 1
+              ? { ...item, quantity: item.quantity - 1 }
+              : null
+            : item
+        )
         .filter((item) => item !== null);
-  
+
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
+  const removeFromCart = (productID) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.ProductID !== productID);
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       return updatedCart;
     });
@@ -43,14 +60,10 @@ const Cart = () => {
 
   const handleCheckoutSuccess = (orderData) => {
     console.log('Order successfully placed:', orderData);
-
     localStorage.removeItem('cart');
-  
     setCart([]);
-
     navigate('/thank-you', { state: orderData });
   };
-  
 
   return (
     <section className="section cartPage">
@@ -63,12 +76,12 @@ const Cart = () => {
         <div className="row">
           <div className="col-md-9 pr-5">
             <div className="table-responsive">
-              <table className="table">
+              <table className="table ">
                 <thead>
                   <tr>
                     <th width="35%">Product</th>
                     <th width="15%">Unit Price</th>
-                    <th width="25%">Quantity</th>
+                    <th width="20%">Quantity</th>
                     <th width="15%">Subtotal</th>
                     <th width="10%">Remove</th>
                   </tr>
@@ -91,15 +104,22 @@ const Cart = () => {
                             </div>
                           </div>
                         </td>
-                        <td width="15%">${product.Price}</td>
-                        <td width="25%">{product.quantity}</td>
+                        <td width="15%">${product.Price.toFixed(2)}</td>
+                        <td width="20%">
+                          <div className="d-flex align-items-center">
+                            <button className="btn btn-sm btn-light" onClick={() => decreaseQuantity(product.ProductID)}><FaMinus />
+                            </button>
+                            <span className="mx-2">{product.quantity}</span>
+                            <button className="btn btn-sm btn-light" onClick={() => increaseQuantity(product.ProductID)}><FaPlus />
+                            </button>
+                          </div>
+                        </td>
                         <td width="15%">
                           ${(product.Price * product.quantity).toFixed(2)}
                         </td>
                         <td width="10%">
                           <span className="remove" onClick={() => removeFromCart(product.ProductID)}>
-                          <CiTrash />
-
+                            <CiTrash size={20} />
                           </span>
                         </td>
                       </tr>
@@ -130,9 +150,9 @@ const Cart = () => {
                 </span>
               </div>
               <Button className="btn-checkout" onClick={() => {
-  console.log("Opening checkout modal with cart items:", cart);
-  setOpenModal(true);
-}}>checkout
+                setOpenModal(true);
+              }}>
+                Checkout
               </Button>
             </div>
           </div>
@@ -140,13 +160,12 @@ const Cart = () => {
       </div>
 
       <CheckoutModal
-  open={openModal}
-  onClose={() => setOpenModal(false)}
-  totalAmount={totalAmount}
-  cartItems={cart}
-  handleCheckoutSuccess={handleCheckoutSuccess}
-/>
-
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        totalAmount={totalAmount}
+        cartItems={cart}
+        handleCheckoutSuccess={handleCheckoutSuccess}
+      />
     </section>
   );
 };

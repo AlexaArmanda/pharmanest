@@ -33,9 +33,10 @@ const ProductItem = ({ product }) => {
             </Button>
           </div>
         </div>
-        <h4>{product.Name}</h4>
+        <div className="ml-2">
+        <h4 className="mt-3 text-dark">{product.Name}</h4>
         <span className="text-success">In Stock: {product.Stock}</span>
-        <Rating
+        <div><Rating
           className="mt-2 mb-2"
           name="read-only"
           value={4}
@@ -43,15 +44,16 @@ const ProductItem = ({ product }) => {
           size="small"
           precision={0.5}
         />
+        </div>
         <div className="d-flex">
           <span className="oldPrice">{product.Price}</span>
           <span className="newPrice text-danger ml-2">$10</span>
          
         </div>
         
-      
+        </div>
     </Link>
-    <button className="btn-green" onClick={handleAddToCart}>
+    <button className="btn-green product" onClick={handleAddToCart}>
             Add to Cart
           </button>
     </div>

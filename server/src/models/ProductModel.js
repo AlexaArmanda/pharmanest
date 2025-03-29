@@ -1,7 +1,6 @@
 const { sql, poolPromise } = require("../config/db");
 
 class ProductModel {
-  // Get all products
   static async getAllProducts() {
     try {
       const pool = await poolPromise;
@@ -12,7 +11,6 @@ class ProductModel {
     }
   }
 
-  // Get a product by ID
   static async getProductById(id) {
     try {
       const pool = await poolPromise;
@@ -26,7 +24,6 @@ class ProductModel {
     }
   }
 
-  // Add a new product
   static async addProduct(name, description, price, stock) {
     try {
       const pool = await poolPromise;
@@ -45,7 +42,6 @@ class ProductModel {
     }
   }
 
-  // Update a product by ID
   static async updateProduct(id, name, description, price, stock) {
     try {
       const pool = await poolPromise;
@@ -65,7 +61,6 @@ class ProductModel {
     }
   }
 
-  // Delete a product by ID
   static async deleteProduct(id) {
     try {
       const pool = await poolPromise;

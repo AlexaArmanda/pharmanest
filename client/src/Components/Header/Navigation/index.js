@@ -1,10 +1,10 @@
 import Button from "@mui/material/Button";
 import { IoMenu } from "react-icons/io5";
 import { FaAngleDown } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { Link } from "@mui/material";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -40,218 +40,247 @@ const Navigation = () => {
               >
                 <ul>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Prescription Medicines{" "}
-                        <FaAngleRight className="ml-auto" />{" "}
-                      </Button>
-                    </Link>
+                    <Button>
+                      Prescription Medicines{" "}
+                      <FaAngleRight className="ml-auto" />{" "}
+                    </Button>
+
                     <div className="submenu">
                       <Button onClick={() => handleCategoryClick(1)}>
                         Antibiotics
                       </Button>
-                      <Link to="/">
-                        <Button>Blood Pressure Medications</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Diabetes Medications</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Pain Relievers</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Mental Health & Neurology</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Thyroid Medications</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Hormonal Therapies</Button>
-                      </Link>
+
+                      <Button onClick={() => handleCategoryClick(2)}>
+                        Blood Pressure Medications
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(3)}>
+                        Diabetes Medications
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(4)}>
+                        Pain Relievers
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(5)}>
+                        Mental Health & Neurology
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(6)}>
+                        Thyroid Medications
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(7)}>
+                        Hormonal Therapies
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Over-the-Counter Medicines
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Over-the-Counter Medicines
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Pain & Fever Relief</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Cold & Flu</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Digestive Health</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Allergy Relief</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Motion Sickness</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Sleep Aids</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(8)}>
+                        Pain & Fever Relief
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(9)}>
+                        Cold & Flu
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(10)}>
+                        Digestive Health
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(11)}>
+                        Allergy Relief
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(12)}>
+                        Motion Sickness
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(13)}>
+                        Sleep Aids
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Vitamins & Supplements
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Vitamins & Supplements
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Multivitamins</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Immune Boosters</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Joint Health</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Protein & Weight Management</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Hair, Skin & Nails</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>GSports Nutrition</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(14)}>
+                        Multivitamins
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(15)}>
+                        Immune Boosters
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(16)}>
+                        Joint Health
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(17)}>
+                        Protein & Weight Management
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(18)}>
+                        Hair, Skin & Nails
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(19)}>
+                        GSports Nutrition
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Personal Care & Hygiene
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Personal Care & Hygiene
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Oral Care</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Feminine Hygiene</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Skin Care</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Hair Care</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Deodorants & Antiperspirants</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Shaving & Grooming</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(20)}>
+                        Oral Care
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(21)}>
+                        Feminine Hygiene
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(22)}>
+                        Skin Care
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(23)}>
+                        Hair Care
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(24)}>
+                        Deodorants & Antiperspirants
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(25)}>
+                        Shaving & Grooming
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Baby & Mother Care
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Baby & Mother Care
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Baby Formula & Food</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Diapers & Wipes</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Breastfeeding Essentials</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Baby Health</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Baby Care</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Baby Bottles & Accessories</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(26)}>
+                        Baby Formula & Food
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(27)}>
+                        Diapers & Wipes
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(28)}>
+                        Breastfeeding Essentials
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(29)}>
+                        Baby Health
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(30)}>
+                        Baby Care
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(31)}>
+                        Baby Bottles & Accessories
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        First Aid & Wound Care
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      First Aid & Wound Care
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Bandages & Dressings</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Antiseptics & Disinfectants</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Pain Relief Sprays & Balms</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Thermometers & BP Monitors</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Burn Care</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(32)}>
+                        Bandages & Dressings
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(33)}>
+                        Antiseptics & Disinfectants
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(34)}>
+                        Pain Relief Sprays & Balms
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(35)}>
+                        Thermometers & BP Monitors
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(36)}>
+                        Burn Care
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Medical Devices & Equipment
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Medical Devices & Equipment
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Blood Pressure Monitors</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Glucometers & Test Strips</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Nebulizers & Inhalers</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Oximeters & Thermometers</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Wheelchairs & Mobility Aids</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(37)}>
+                        Blood Pressure Monitors
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(38)}>
+                        Glucometers & Test Strips
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(39)}>
+                        Nebulizers & Inhalers
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(40)}>
+                        Oximeters & Thermometers
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(41)}>
+                        Wheelchairs & Mobility Aids
+                      </Button>
                     </div>
                   </li>
                   <li>
-                    <Link to="/">
-                      <Button>
-                        Herbal & Ayurvedic Products
-                        <FaAngleRight className="ml-auto" />
-                      </Button>
-                    </Link>
+                    <Button>
+                      Herbal & Ayurvedic Products
+                      <FaAngleRight className="ml-auto" />
+                    </Button>
+
                     <div className="submenu">
-                      <Link to="/">
-                        <Button>Ayurvedic Medicines</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Homeopathic Remedies</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Herbal Supplements</Button>
-                      </Link>
-                      <Link to="/">
-                        <Button>Essential Oils</Button>
-                      </Link>
+                      <Button onClick={() => handleCategoryClick(42)}>
+                        Ayurvedic Medicines
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(43)}>
+                        Homeopathic Remedies
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(44)}>
+                        Herbal Supplements
+                      </Button>
+
+                      <Button onClick={() => handleCategoryClick(45)}>
+                        Essential Oils
+                      </Button>
                     </div>
                   </li>
                 </ul>
@@ -261,39 +290,36 @@ const Navigation = () => {
           <div className="col-sm-9 navPart2 d-flex align-items-center">
             <ul className="list list-inline ml-auto">
               <li className="list-inline-item">
-                <Link to="/">
-                  <Button>Home</Button>
+                <Link>
+                <Button>Home</Button>
                 </Link>
               </li>
               <li className="list-inline-item">
-                <Link to="/">
-                  <Button>New Products</Button>
-                </Link>
+              <Link>
+                <Button>New Products</Button>
                 <div className="submenu shadow">
-                  <Link to="/">
-                    <Button>General Health</Button>
-                  </Link>
-                  <Link to="/">
-                    <Button>General Health</Button>
-                  </Link>
-                  <Link to="/">
-                    <Button>General Health</Button>
-                  </Link>
+                  <Button>General Health</Button>
+
+                  <Button>General Health</Button>
+
+                  <Button>General Health</Button>
                 </div>
+              </Link>
               </li>
               <li className="list-inline-item">
-                <Link to="/">
-                  <Button>On Sale</Button>
+              <Link> 
+                <Button>On Sale</Button>
+                </Link>
+              </li>
+
+              <li className="list-inline-item">
+                <Link>
+                <Button>Contact</Button>
                 </Link>
               </li>
               <li className="list-inline-item">
-                <Link to="/">
-                  <Button>Contact</Button>
-                </Link>
-              </li>
-              <li className="list-inline-item">
-                <Link to="/">
-                  <Button>About Us</Button>
+              <Link>
+                <Button>About Us</Button>
                 </Link>
               </li>
             </ul>

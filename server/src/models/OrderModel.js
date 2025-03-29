@@ -2,7 +2,7 @@ const { sql, poolPromise } = require("../config/db");
 
 const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) => {
     let transaction;
-    let totalAmount = 0; // ✅ Declare totalAmount before using it
+    let totalAmount = 0; 
 
     try {
         console.log("Connecting to database...");
@@ -13,7 +13,6 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
         await transaction.begin();
         console.log("Transaction started...");
 
-        // Step 1: Calculate the total amount before inserting the order
         for (const item of cartItems) {
             console.log(`Item - productId: ${item.ProductID}, quantity: ${item.quantity}, price: ${item.Price}`);
             const itemTotal = item.quantity * item.Price;
@@ -22,12 +21,11 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
 
         console.log(`Total amount calculated: ${totalAmount}`);
 
-        // Step 2: Insert into Orders table **with correct TotalAmount**
         const orderResult = await transaction
             .request()
             .input("UserID", sql.Int, userId || null)
             .input("OrderDate", sql.DateTime, new Date())
-            .input("TotalAmount", sql.Decimal(10, 2), totalAmount) // ✅ Now inserting correct total
+            .input("TotalAmount", sql.Decimal(10, 2), totalAmount)
             .input("Status", sql.VarChar, "Pending")
             .input("ShippingAddress", sql.VarChar, shippingAddress)
             .input("PaymentMethod", sql.VarChar, paymentMethod)
@@ -42,7 +40,6 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
         const orderId = orderResult.recordset[0].OrderID;
         console.log("Order created with ID:", orderId);
 
-        // Step 3: Insert each product into OrderDetails
         for (const item of cartItems) {
             await transaction
                 .request()
@@ -62,7 +59,7 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
         return { orderId, message: "Order placed successfully!" };
 
     } catch (error) {
-        console.error("❌ Error placing order:", error);
+        console.error("Error placing order:", error);
 
         if (transaction) {
             console.log("Rolling back transaction...");

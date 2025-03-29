@@ -1,6 +1,5 @@
 const { sql, poolPromise } = require("../config/db");
 
-// Get Cart Products
 const getCartProducts = async (req, res) => {
   try {
     const pool = await poolPromise;

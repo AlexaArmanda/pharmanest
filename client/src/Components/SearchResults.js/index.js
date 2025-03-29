@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-
+import ProductItem from "../ProductItem";
 const SearchResults = () => {
   const [products, setProducts] = useState([]);
-  const location = useLocation(); 
+  const location = useLocation();
 
- 
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get("query");
 
@@ -23,24 +22,20 @@ const SearchResults = () => {
 
       fetchData();
     }
-  }, [query]); 
+  }, [query]);
 
   return (
     <div className="search-results">
-      <h2>Search Results for: {query}</h2>
+      <h2 className="search-title">Search Results for: <span>{query}</span></h2>
 
       {products.length > 0 ? (
-        <div className="product-list">
+        <div className="product-grid">
           {products.map((product) => (
-            <div key={product.ProductID} className="product-item">
-              <h3>{product.Name}</h3>
-              <p>{product.Description}</p>
-              <span>${product.Price}</span>
-            </div>
+            <ProductItem key={product.ProductID} product={product} />
           ))}
         </div>
       ) : (
-        <p>No products found matching your search.</p>
+        <p className="no-results">No products found matching your search.</p>
       )}
     </div>
   );
