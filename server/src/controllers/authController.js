@@ -61,16 +61,17 @@ const loginUser = async (req, res) => {
     }
 
     const user = result.recordset[0];
-
-    const isMatch = await bcrypt.compare(Password, user.PasswordHash);
+    console.log("Stored Hash:", user.PasswordHash);
+    console.log("Input Password:", Password);
+    const isMatch = await bcrypt.compare(Password, user.PasswordHash);     
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
-      { UserID: user.UserID },
+      { id: user.UserID },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     res.json({
@@ -79,14 +80,36 @@ const loginUser = async (req, res) => {
         UserID: user.UserID,
         FullName: user.FullName,
         Email: user.Email,
-        Phone: user.Phone,
-        Address: user.Address,
       },
     });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
+const getUserProfile = async (req, res) => {
+  try {
+      const userId = req.user.id;
 
-module.exports = { registerUser, loginUser };
+      const pool = await poolPromise;
+      const result = await pool
+          .request()
+          .input("UserID", sql.Int, userId)
+          .query("SELECT UserID, FullName as Name, Email FROM Users WHERE UserID = @UserID");
+
+      if (result.recordset.length === 0) {
+          return res.status(404).json({ error: "User not found" });
+      }
+
+      res.status(200).json(result.recordset[0]);
+  } catch (error) {
+      console.error("Error fetching user profile:", error.message);
+      res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
+module.exports = { registerUser, loginUser, getUserProfile };

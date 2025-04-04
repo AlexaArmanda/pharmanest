@@ -5,15 +5,20 @@ import { FaRegUser } from "react-icons/fa";
 import { GrCart } from "react-icons/gr";
 import SearchBox from "./SearchBox";
 import Navigation from "./Navigation";
-import MyContext from "../../MyContext";
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
+
 const Header = () => {
-  const context = useContext(MyContext);
   const { cart } = useCart();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 770);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+
   const navigate = useNavigate();
+
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 770);
@@ -21,6 +26,12 @@ const Header = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token); 
+  }, []);
+
 
   const totalItemsInCart = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -46,11 +57,8 @@ const Header = () => {
                 <div className="logoWrapper col-sm-11 d-flex align-items-center">
                   <SearchBox />
                   <div className="part3 d-flex ml-auto">
-                    {/* {
-                                    context.isLoggedin!==true ? <Button className='circle mr-3'><FaRegUser /></Button> : <Link to={'/profile'}><Button className='circle mr-3'><FaRegUser /></Button></Link>                               
-                                    } */}
-                    <Button
-                      onClick={() => navigate("/signIn")}
+                  <Button
+                      onClick={() => navigate(isLoggedIn ? "/profile" : "/signIn")}
                       className="circle mr-3"
                     >
                       <FaRegUser />
@@ -82,11 +90,8 @@ const Header = () => {
                 </Link>
 
                 <div className="part3 d-flex align-items-center ml-auto">
-                  {/* {
-                     context.isLoggedin!==true ? <Button className='circle mr-3'><FaRegUser /></Button> : <Link to={'/profile'}><Button className='circle mr-3'><FaRegUser /></Button></Link>                               
-                     } */}
-                  <Button
-                      onClick={() => navigate("/signIn")}
+                <Button
+                      onClick={() => navigate(isLoggedIn ? "/profile" : "/signIn")}
                       className="circle mr-3"
                     >
                       <FaRegUser />
@@ -111,7 +116,7 @@ const Header = () => {
             )}
 
             <div className="visibleSM">
-              <SearchBox />
+              <SearchBox /> 
             </div>
           </div>
         </div>

@@ -1,9 +1,10 @@
-const { createOrder } = require("../models/OrderModel");
+const { createOrder, getUserOrdersFromDB } = require("../models/OrderModel");
 
 const placeOrder = async (req, res) => {
   try {
-    const { userId, cartItems, shippingAddress, paymentMethod } = req.body;
-
+    const { cartItems, shippingAddress, paymentMethod } = req.body;
+    const userId = req.user.id;
+    console.log("UserID from JWT:", userId);
     if (!cartItems || cartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty!" });
     }
@@ -17,4 +18,20 @@ const placeOrder = async (req, res) => {
   }
 };
 
-module.exports = { placeOrder };
+const getUserOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log("Fetching orders for UserID:", userId);
+
+    const orders = await getUserOrdersFromDB(userId);
+    console.log("Orders fetched:", orders); 
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Failed to fetch orders:", error.message);
+    res.status(500).json({ error: "Could not retrieve orders" });
+  }
+};
+
+
+module.exports = { placeOrder, getUserOrders };

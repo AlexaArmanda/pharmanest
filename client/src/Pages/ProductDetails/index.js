@@ -5,7 +5,6 @@ import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
 import { CiShoppingCart } from "react-icons/ci";
 import { FaHeart } from "react-icons/fa";
-import { IoGitCompareOutline } from "react-icons/io5";
 import Tooltip from "@mui/material/Tooltip";
 import { useCart } from "../../context/CartContext";
 
@@ -16,6 +15,13 @@ const ProductDetails = () => {
     const [activeSize, setActiveSize] = useState(null);
     const [activeTab, setActiveTab] = useState("description");
     const { addToCart } = useCart();
+    const [reviews, setReviews] = useState([]);
+    const [loadingReviews, setLoadingReviews] = useState(true);
+
+
+    const [newReview, setNewReview] = useState({ rating: 0, text: "" });
+    
+
     useEffect(() => {
         axios
             .get(`http://localhost:5000/api/products/${id}`)
@@ -29,8 +35,48 @@ const ProductDetails = () => {
             });
     }, [id]);
 
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/review/${id}`);
+                setReviews(response.data);
+            } catch (error) {
+                console.error("Error fetching reviews:", error);
+            } finally {
+                setLoadingReviews(false);
+            }
+        };
+    
+        fetchReviews();
+    }, [id]);
+
+    const handleSubmitReview = async () => {
+        if (newReview.rating === 0 || newReview.text.trim() === "") {
+            alert("Please add a rating and a comment before submitting.");
+            return;
+        }
+    
+        try {
+            await axios.post(`http://localhost:5000/api/review/${id}`, {
+                ProductID: id,
+                UserID: 5, 
+                Rating: newReview.rating,
+                ReviewText: newReview.text,
+            });
+    
+            alert("Review submitted successfully!");
+    
+            setNewReview({ rating: 0, text: "" });
+
+        } catch (error) {
+            console.error("Error submitting review:", error);
+            alert("Failed to submit review. Please try again.");
+        }
+    };
+
     if (loading) return <div>Loading product details...</div>;
     if (!product) return <div>Product not found.</div>;
+    
 
     return (
         <section className="productDetails section">
@@ -154,12 +200,45 @@ const ProductDetails = () => {
                         </div>
                     )}
 
-                    {activeTab === "Reviews" && (
-                        <div className="tabContent">
-                            <h3>Customer questions & answers</h3>
-                            <p>No reviews yet.</p>
-                        </div>
-                    )}
+{activeTab === "Reviews" && (
+    <div className="tabContent">
+        <h3>Customer Reviews</h3>
+        
+        {loadingReviews ? (
+            <p>Loading reviews...</p>
+        ) : reviews.length === 0 ? (
+            <p>No reviews yet. Be the first to review this product!</p>
+        ) : (
+            reviews.map((review) => (
+                <div key={review.ReviewID} className="review">
+                    <h5>{review.FullName}</h5>
+                    <Rating name="read-only" value={review.Rating} readOnly />
+                    <p>{review.ReviewText}</p>
+                    <small>Posted on: {new Date(review.CreatedAt).toLocaleDateString()}</small>
+                </div>
+            ))
+        )}
+
+        
+        <div className="add-review">
+            <h4>Add Your Review</h4>
+            <Rating
+                name="user-rating"
+                value={newReview.rating}
+                onChange={(event, newValue) => setNewReview({ ...newReview, rating: newValue })}
+            />
+            <textarea
+                placeholder="Write your review..."
+                value={newReview.text}
+                onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+            />
+            <button className="btn btn-green mt-2" onClick={handleSubmitReview}>
+                Submit Review
+            </button>
+        </div>
+    </div>
+)}
+
                 </div>
             </div>
         </section>

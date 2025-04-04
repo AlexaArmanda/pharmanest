@@ -9,7 +9,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import Cart from "./Pages/Cart";
 import SignIn from "./Pages/SignIn";
 import SignUp from "./Pages/SignUp";
-import { useState } from "react";
+import Profile from "./Pages/Profile";
 import MyContext from './MyContext';
 import { CartProvider } from "./context/CartContext";
 import ThankYou from "./Pages/ThankYou";
@@ -29,6 +29,8 @@ function Layout() {
         <Route exact path="/product/:id" element={<ProductDetails />} />
         <Route exact path="/cart" element={<Cart />} />
         <Route exact path="/signIn" element={<SignIn />} />
+
+        <Route exact path="/profile" element={<Profile />} />
         <Route exact path="/signUp" element={<SignUp />} />
         <Route exact path="/thank-you" element={<ThankYou />} />
         <Route exact path="/search" element={<SearchResults />} />

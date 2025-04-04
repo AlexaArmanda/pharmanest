@@ -1,5 +1,4 @@
 const { sql, poolPromise } = require("../config/db");
-
 const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) => {
     let transaction;
     let totalAmount = 0; 
@@ -23,7 +22,7 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
 
         const orderResult = await transaction
             .request()
-            .input("UserID", sql.Int, userId || null)
+            .input("UserID", sql.Int, userId)
             .input("OrderDate", sql.DateTime, new Date())
             .input("TotalAmount", sql.Decimal(10, 2), totalAmount)
             .input("Status", sql.VarChar, "Pending")
@@ -70,5 +69,24 @@ const createOrder = async (userId, cartItems, shippingAddress, paymentMethod) =>
     }
 };
 
+const getUserOrdersFromDB = async (userId) => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool
+        .request()
+        .input("UserID", sql.Int, userId)
+        .query(`
+          SELECT OrderID, OrderDate, TotalAmount, Status
+          FROM Orders
+          WHERE UserID = @UserID
+          ORDER BY OrderDate DESC
+        `);
+  
+      return result.recordset;
+    } catch (error) {
+      console.error("Error fetching user orders:", error);
+      throw new Error("Failed to retrieve orders.");
+    }
+  };
 
-module.exports = { createOrder };
+module.exports = { createOrder, getUserOrdersFromDB };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Box, TextField, Typography, Button } from "@mui/material";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; 
 
 const CheckoutModal = ({
   open,
@@ -17,11 +18,16 @@ const CheckoutModal = ({
   const [expiration, setExpiration] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/signIn");
+      return;
+    }
     const orderData = {
       userId: userId || null,
       shippingAddress: address,
@@ -30,10 +36,16 @@ const CheckoutModal = ({
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/orders",
-        orderData
-      );
+    const response = await axios.post(
+      "http://localhost:5000/api/orders/placeOrder",
+      orderData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
       handleCheckoutSuccess(response.data);
 
