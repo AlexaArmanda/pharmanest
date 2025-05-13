@@ -113,76 +113,227 @@ const getProductById = async (req, res) => {
     }
 };
 
-  const getFilteredProductsByCategory = async (req, res) => {
+const getFilteredProductsByCategory = async (req, res) => {
+  try {
+    const { id, filters } = req.params;
+    const filterArray = filters.split(',');
+
+    const pool = await poolPromise;
+    const request = pool.request();
+
+    let whereClause = "p.CategoryID = @CategoryID";
+    let havingClause = "";
+    let selectedRatings = [];
+
+    request.input("CategoryID", sql.Int, id);
+
+    filterArray.forEach((filter) => {
+      const [filterType, filterValue] = filter.split(':');
+
+      if (filterType === 'brand') {
+        const brands = filterValue.split('|');
+        const brandParams = brands.map((_, i) => `@Brand${i}`).join(', ');
+        whereClause += ` AND p.Brand IN (${brandParams})`;
+        brands.forEach((brand, i) => {
+          request.input(`Brand${i}`, sql.VarChar, brand);
+        });
+      }
+
+      if (filterType === 'price') {
+        const [minPrice, maxPrice] = filterValue.split('-').map(Number);
+        whereClause += ` AND p.Price BETWEEN @MinPrice AND @MaxPrice`;
+        request.input("MinPrice", sql.Decimal(10, 2), minPrice || 0);
+        request.input("MaxPrice", sql.Decimal(10, 2), maxPrice || 9999999);
+      }
+
+      if (filterType === 'stock') {
+        const stockFilters = filterValue.split('|');
+        const conditions = [];
+        if (stockFilters.includes('lowStock')) conditions.push("p.Stock < 10");
+        if (stockFilters.includes('inStock')) conditions.push("p.Stock >= 10");
+        if (conditions.length) whereClause += ` AND (${conditions.join(' OR ')})`;
+      }
+
+      if (filterType === 'ratings') {
+        selectedRatings = filterValue.split('|').map(Number);
+        const minRating = Math.min(...selectedRatings);
+        request.input("MinRating", sql.Float, minRating);
+        havingClause = "HAVING COUNT(r.Rating) > 0 AND AVG(CAST(r.Rating AS FLOAT)) >= @MinRating";
+      }
+    });
+
+    const query = `
+      SELECT 
+        p.ProductID,
+        p.Name,
+        p.Description,
+        p.Price,
+        p.SalePrice,
+        p.IsOnSale,
+        p.Brand,
+        p.Stock,
+        p.CategoryID,
+        p.imageURL,
+        p.CreatedAt,
+        p.RequiresPrescription,
+        ISNULL(AVG(CAST(r.Rating AS FLOAT)), 0) AS AverageRating
+      FROM Products p
+      LEFT JOIN Reviews r ON p.ProductID = r.ProductID
+      WHERE ${whereClause}
+      GROUP BY 
+        p.ProductID,
+        p.Name,
+        p.Description,
+        p.Price,
+        p.SalePrice,
+        p.IsOnSale,
+        p.Brand,
+        p.Stock,
+        p.CategoryID,
+        p.imageURL,
+        p.CreatedAt,
+        p.RequiresPrescription
+      ${havingClause}
+    `;
+
+    const result = await request.query(query);
+
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: "No products found matching the filters" });
+    }
+
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error in getFilteredProductsByCategory:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+  
+  const getFeaturedProducts = async (req, res) => {
     try {
-      const { id, filters } = req.params;
-      console.log('Category ID:', id);
-      console.log('Filters:', filters); 
-  
-      const filterArray = filters.split(',');
-      console.log('Filter Array:', filterArray); 
-  
-      const pool = await poolPromise;
-      let query = "SELECT * FROM Products WHERE CategoryID = @id";
-      let filterParams = [{ name: "id", type: sql.Int, value: id }];
-  
-      filterArray.forEach((filter) => {
-        const [filterType, filterValue] = filter.split(':');
-        console.log(`filterType: ${filterType}, filterValue: ${filterValue}`);
-  
-        if (filterType === 'brand') {
-          const brands = filterValue.split('|');
-          const brandParams = brands.map((brand, index) => `@Brand${index}`).join(', ');
-          query += ` AND Brand IN (${brandParams})`;
-          brands.forEach((brand, index) => {
-              filterParams.push({ name: `Brand${index}`, type: sql.VarChar, value: brand });
-          });
+      const { featuredID } = req.params;
+      if (!featuredID) {
+        return res.status(400).json({ message: "Missing featuredID" });
       }
   
-        if (filterType === 'price') {
-          const [minPrice, maxPrice] = filterValue.split('-');
-          query += " AND Price BETWEEN @MinPrice AND @MaxPrice";
-          filterParams.push({ name: "MinPrice", type: sql.Decimal, value: minPrice || 0 });
-          filterParams.push({ name: "MaxPrice", type: sql.Decimal, value: maxPrice || 9999999 });
-        }
+      const pool = await poolPromise;
   
-        if (filterType === 'stock') {
-          const stockFilters = filterValue.split('|'); 
-          let stockConditions = [];
-        
-          if (stockFilters.includes('lowStock')) {
-            stockConditions.push("Stock < 10");
-          }
-          if (stockFilters.includes('inStock')) {
-            stockConditions.push("Stock >= 10");
-          }
-          
-          if (stockConditions.length > 0) {
-            query += ` AND (${stockConditions.join(" OR ")})`; 
-          }
-        }
-      });
-  
-      console.log('Constructed SQL Query:', query);
-  
-      const request = pool.request();
-      filterParams.forEach(param => {
-        request.input(param.name, param.type, param.value);
-      });
-  
-      const result = await request.query(query);
+      const result = await pool
+        .request()
+        .input("FeaturedID", sql.Int, featuredID)
+        .query(`
+          SELECT P.ProductID, P.Name, P.Description, P.Price, P.Stock, 
+                 P.CategoryID, P.CreatedAt, P.imageURL, P.Brand
+          FROM Products P
+          JOIN FeaturedProducts FP ON P.ProductID = FP.ProductID
+          WHERE FP.[FeaturedID] = @FeaturedID
+        `);
   
       if (result.recordset.length === 0) {
-        return res.status(404).json({ message: "No products found matching the filters" });
+        return res.status(404).json({ message: "No featured products found" });
       }
   
       res.json(result.recordset);
     } catch (error) {
-      console.error("Error in getFilteredProductsByCategory:", error);
+      console.error("Error fetching featured products:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+  const getNewProducts = async (req, res) => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool.request().query(`
+        SELECT TOP 25 * 
+        FROM Products 
+        ORDER BY CreatedAt DESC
+      `);
+      res.json(result.recordset);
+    } catch (error) {
+      console.error("Error fetching new products:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+  const getSaleProducts = async (req, res) => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool
+        .request()
+        .query(`
+          SELECT ProductID, Name, Price, SalePrice, IsOnSale, CreatedAt, Stock, CategoryID, imageURL, Brand
+          FROM Products 
+          WHERE IsOnSale = 1
+          ORDER BY CreatedAt DESC
+        `);
+  
+      if (result.recordset.length === 0) {
+        return res.status(404).json({ message: "No sale products found" });
+      }
+  
+      res.json(result.recordset);
+    } catch (error) {
+      console.error("Error fetching sale products:", error.message);
+      console.error("Stack Trace:", error.stack); 
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  const getClearanceProducts = async (req, res) => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool
+        .request()
+        .query(`
+          SELECT ProductID, Name, Price, SalePrice, IsOnSale, Stock, CategoryID, imageURL, Brand
+          FROM Products 
+          WHERE Stock < 10
+          ORDER BY CreatedAt DESC
+        `);
+  
+      if (result.recordset.length === 0) {
+        return res.status(404).json({ message: "No clearance products found" });
+      }
+  
+      res.json(result.recordset);
+    } catch (error) {
+      console.error("Error fetching clearance products:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+  const getBestSellers = async (req, res) => {
+    try {
+      const pool = await poolPromise;
+      const result = await pool
+        .request()
+        .query(`
+          SELECT P.ProductID, P.Name, P.Price, P.Stock, P.imageURL, P.Brand, COUNT(R.ReviewID) AS ReviewCount
+          FROM Products P
+          LEFT JOIN Reviews R ON P.ProductID = R.ProductID
+          GROUP BY P.ProductID, P.Name, P.Price, P.Stock, P.imageURL, P.Brand
+          ORDER BY ReviewCount DESC
+          OFFSET 0 ROWS FETCH NEXT 30 ROWS ONLY;
+        `);
+  
+      if (result.recordset.length === 0) {
+        return res.status(404).json({ message: "No best-seller products found" });
+      }
+  
+      res.json(result.recordset);
+    } catch (error) {
+      console.error("Error fetching best-seller products:", error);
       res.status(500).json({ error: error.message });
     }
   };
   
   
+  
 
-module.exports = { getProducts, getProductById, searchProducts,getBrands, getProductsByCategory, getFilteredProductsByCategory };
+
+  
+
+module.exports = { getProducts, getProductById, searchProducts,getBrands, getProductsByCategory, getFilteredProductsByCategory, getFeaturedProducts, getNewProducts, getSaleProducts, getClearanceProducts, getBestSellers };

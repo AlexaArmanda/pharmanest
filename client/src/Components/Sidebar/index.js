@@ -2,6 +2,8 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import RangeSlider from "react-range-slider-input";
 import "react-range-slider-input/dist/style.css";
+import StarIcon from "@mui/icons-material/Star";
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -10,6 +12,7 @@ const Sidebar = ({ categoryId, applyFilters }) => {
   const [brands, setBrands] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedStock, setSelectedStockState] = useState('');
+  const [selectedRatings, setSelectedRatings] = useState([]);
 
   useEffect(() => {
     const fetchBrands = async () => {
@@ -54,6 +57,16 @@ const Sidebar = ({ categoryId, applyFilters }) => {
     setValue(newValue);
     
   };
+
+  const handleRatingChange = (event) => {
+    const ratingValue = parseInt(event.target.value);
+    setSelectedRatings((prevRatings) => {
+      return prevRatings.includes(ratingValue)
+        ? prevRatings.filter((item) => item !== ratingValue)
+        : [...prevRatings, ratingValue];
+    });
+  };
+
 
   return (
     <div className="sidebar">
@@ -118,7 +131,37 @@ const Sidebar = ({ categoryId, applyFilters }) => {
           </div>
         </div>
 
-        <button onClick={() => applyFilters({ brands: selectedBrands, priceRange: value, stock: selectedStock })}>
+        <div className="filterBox">
+          <h5>RATINGS</h5>
+          <div className="scroll">
+            <ul>
+            {[5, 4, 3, 2, 1].map((rating) => (
+  <li key={rating}>
+    <FormControlLabel
+      className="w-100"
+      control={
+        <Checkbox
+          onChange={handleRatingChange}
+          value={rating}
+          checked={selectedRatings.includes(rating)}
+        />
+      }
+      label={
+        <span style={{ display: "flex", alignItems: "center" }}>
+          {[...Array(rating)].map((_, i) => (
+            <StarIcon key={i} style={{ color: "#ffc107" }} fontSize="small" />
+          ))}
+        </span>
+      }
+    />
+  </li>
+))}
+
+            </ul>
+          </div>
+        </div>
+
+        <button className="mt-2" onClick={() => applyFilters({ brands: selectedBrands, priceRange: value, stock: selectedStock, ratings: selectedRatings, })}>
           Apply Filters
         </button>
       </div>

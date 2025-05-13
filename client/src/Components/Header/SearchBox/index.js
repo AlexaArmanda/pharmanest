@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "@mui/material/Button";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom"; 
@@ -26,7 +26,7 @@ const SearchBox = () => {
   };
 
   const handleSearchClick = () => {
-
+    setSuggestions([]);
     navigate(`/search?query=${query}`);
   };
 

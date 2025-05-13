@@ -1,7 +1,24 @@
-import React, { useState } from "react";
-import { Modal, Box, TextField, Typography, Button } from "@mui/material";
+import { useState } from "react";
+import {
+  Modal,
+  Box,
+  TextField,
+  Typography,
+  Button,
+  MenuItem,
+  Stack,
+} from "@mui/material";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+
+const paymentMethods = [
+  "Credit Card",
+  "PayPal",
+  "Apple Pay",
+  "Cash on Delivery",
+];
 
 const CheckoutModal = ({
   open,
@@ -11,18 +28,30 @@ const CheckoutModal = ({
   userId,
   handleCheckoutSuccess,
 }) => {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [expiration, setExpiration] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    email: "",
+    phone: "",
+    country: "",
+    zip: "",
+    paymentMethod: "Credit Card",
+    cardNumber: "",
+    cvv: "",
+    expiration: "",
+  });
+  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
-
     const token = localStorage.getItem("token");
     if (!token) {
       navigate("/signIn");
@@ -30,25 +59,28 @@ const CheckoutModal = ({
     }
     const orderData = {
       userId: userId || null,
-      shippingAddress: address,
-      paymentMethod: "Credit Card",
+      shippingAddress: formData.address,
+      paymentMethod: formData.paymentMethod,
       cartItems,
+      totalAmount,
     };
-
     try {
-    const response = await axios.post(
-      "http://localhost:5000/api/orders/placeOrder",
-      orderData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-      handleCheckoutSuccess(response.data);
-
+      const response = await axios.post(
+        "http://localhost:5000/api/orders/placeOrder",
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      handleCheckoutSuccess({
+        orderId: response.data.orderId,
+        shippingAddress: formData.address,
+        totalAmount,
+        name: formData.name,
+      });
       onClose();
     } catch (err) {
       setError("Failed to place order. Please try again.");
@@ -59,81 +91,167 @@ const CheckoutModal = ({
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      aria-labelledby="checkout-modal-title"
-      aria-describedby="checkout-modal-description"
-    >
+    <Modal open={open} onClose={onClose}>
       <Box className="modal-box">
-        <Typography id="checkout-modal-title" variant="h6">
-          Enter Payment Information
-        </Typography>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <TextField
-            label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-          />
-          <TextField
-            label="Card Number"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-            type="text"
-          />
-          <TextField
-            label="CVV"
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-            type="password"
-          />
-          <TextField
-            label="Expiration Date"
-            value={expiration}
-            onChange={(e) => setExpiration(e.target.value)}
-            fullWidth
-            required
-            margin="normal"
-            type="text"
-          />
-          {error && <Typography color="error">{error}</Typography>}
-          <div className="modal-actions">
+        <Stack spacing={2} direction="column">
+          {step === 1 && (
+            <>
+              <Typography variant="h6" mb={2} textAlign="center">
+                Checkout - Enter Personal Information
+              </Typography>
+
+              <TextField
+                label="Full Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+              <TextField
+                label="Email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                required
+                type="email"
+              />
+              <TextField
+                label="Phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+              <TextField
+                label="Country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+              <TextField
+                label="Address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+              <TextField
+                label="ZIP / Postal Code"
+                name="zip"
+                value={formData.zip}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <Typography variant="h6" mb={2} textAlign="center">
+                Checkout - Enter Payment Information
+              </Typography>
+
+              <TextField
+                select
+                label="Payment Method"
+                name="paymentMethod"
+                value={formData.paymentMethod}
+                onChange={handleChange}
+                fullWidth
+                required
+              >
+                {paymentMethods.map((method) => (
+                  <MenuItem key={method} value={method}>
+                    {method}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              {formData.paymentMethod === "Credit Card" && (
+                <>
+                  <TextField
+                    label="Card Number"
+                    name="cardNumber"
+                    value={formData.cardNumber}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                  />
+                  <TextField
+                    label="CVV"
+                    name="cvv"
+                    value={formData.cvv}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                    type="password"
+                  />
+                  <TextField
+                    label="Expiration Date"
+                    name="expiration"
+                    value={formData.expiration}
+                    onChange={handleChange}
+                    fullWidth
+                    required
+                    placeholder="MM/YY"
+                  />
+                </>
+              )}
+
+              {error && (
+                <Typography color="error" sx={{ mt: 2 }}>
+                  {error}
+                </Typography>
+              )}
+            </>
+          )}
+        </Stack>
+
+        <Box
+          className="action-buttons"
+          mt={3}
+          display="flex"
+          justifyContent="center"
+          gap={2}
+        >
+          {step === 2 && (
             <Button
-              onClick={handleCheckout}
+              variant="outlined"
+              onClick={() => setStep(1)}
+              startIcon={<ArrowBackIosIcon />}
+              className="back-btn"
+            >
+              Back
+            </Button>
+          )}
+          {step === 1 && (
+            <Button
+              variant="contained"
+              onClick={() => setStep(2)}
+              endIcon={<ArrowForwardIosIcon />}
+              className="next-btn"
+            >
+              Next
+            </Button>
+          )}
+          {step === 2 && (
+            <Button
               variant="contained"
               color="primary"
-              fullWidth
+              onClick={handleCheckout}
               disabled={loading}
             >
               {loading ? "Processing..." : `Pay $${totalAmount.toFixed(2)}`}
             </Button>
-            <Button
-              onClick={onClose}
-              variant="outlined"
-              color="secondary"
-              fullWidth
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
+          )}
+        </Box>
       </Box>
     </Modal>
   );

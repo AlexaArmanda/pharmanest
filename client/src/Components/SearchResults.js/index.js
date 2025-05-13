@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ProductItem from "../ProductItem";
+
 const SearchResults = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
@@ -25,13 +26,17 @@ const SearchResults = () => {
   }, [query]);
 
   return (
-    <div className="search-results">
-      <h2 className="search-title">Search Results for: <span>{query}</span></h2>
+    <div className="search-results-page-container"> 
+      <h2 className="search-results-title">
+        Search Results for: <span>{query}</span>
+      </h2>
 
       {products.length > 0 ? (
-        <div className="product-grid">
+        <div className="search-results-grid">
           {products.map((product) => (
-            <ProductItem key={product.ProductID} product={product} />
+            <div key={product.ProductID} className="search-results-item">
+              <ProductItem product={product} />
+            </div>
           ))}
         </div>
       ) : (

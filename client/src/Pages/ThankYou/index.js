@@ -1,5 +1,3 @@
-// ThankYou.js
-import React from 'react';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 import { Button } from '@mui/material';
@@ -18,25 +16,28 @@ const ThankYou = () => {
           <p>Your order has been successfully processed. You will receive a confirmation email shortly.</p>
         </div>
 
-        <div className="order-summary">
-          <h3>Order Summary</h3>
-          <div className="order-details">
-            <p><strong>Order Number:</strong> #{orderNumber}</p>
-            <p><strong>Shipping Address:</strong> {name}, {Address}</p>
-            <p><strong>Total:</strong> ${totalAmount}</p>
+        {orderNumber ? (
+          <div className="order-summary">
+            <h3>Order Summary</h3>
+            <div className="order-details">
+              <p><strong>Order Number:</strong> #{orderNumber}</p>
+              <p><strong>Shipping Address:</strong> {name && `${name}, `}{Address}</p>
+              <p><strong>Total:</strong> ${totalAmount}</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <p className="text-muted">Order details are not available.</p>
+        )}
 
         <div className="next-steps">
-          <div >
-            <Link to="/" className="btn btn-green">
-              <Button>Go to Homepage</Button>
-            </Link>
-          </div>
+          <Link to="/" >
+            <Button className="thank-you">Go to Homepage</Button>
+          </Link>
         </div>
       </div>
     </section>
   );
 };
+
 
 export default ThankYou;

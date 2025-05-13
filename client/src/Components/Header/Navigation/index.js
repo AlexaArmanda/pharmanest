@@ -1,10 +1,10 @@
 import Button from "@mui/material/Button";
-import { IoMenu } from "react-icons/io5";
 import { FaAngleDown } from "react-icons/fa";
 import { useState } from "react";
 import { FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "@mui/material";
+import ContactForm from "../../ContactForm";
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -14,6 +14,10 @@ const Navigation = () => {
   };
 
   const [isOpenSidebarVal, setisOpenSidebarVal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  
+  
   return (
     <nav>
       <div className="container">
@@ -24,10 +28,7 @@ const Navigation = () => {
                 className="allcatTable align-items-center"
                 onClick={() => setisOpenSidebarVal(!isOpenSidebarVal)}
               >
-                <span className="icon1 mr-2">
-                  <IoMenu />
-                </span>
-                <span className="text">All Categories</span>
+                <span className="text">All products</span>
                 <span className="icon2 ml-2">
                   <FaAngleDown />
                 </span>
@@ -291,35 +292,47 @@ const Navigation = () => {
             <ul className="list list-inline ml-auto">
               <li className="list-inline-item">
                 <Link>
-                <Button>Home</Button>
+                  <Button
+                    onClick={() => {
+                      navigate("/");
+                    }}
+                  >
+                    Home
+                  </Button>
                 </Link>
               </li>
-              <li className="list-inline-item">
-              <Link>
-                <Button>New Products</Button>
-                <div className="submenu shadow">
-                  <Button>General Health</Button>
-
-                  <Button>General Health</Button>
-
-                  <Button>General Health</Button>
-                </div>
-              </Link>
-              </li>
-              <li className="list-inline-item">
-              <Link> 
-                <Button>On Sale</Button>
-                </Link>
-              </li>
-
               <li className="list-inline-item">
                 <Link>
-                <Button>Contact</Button>
+                  <Button onClick={() => {
+                      navigate("/new-products");
+                    }}>New Products</Button>
                 </Link>
               </li>
               <li className="list-inline-item">
-              <Link>
-                <Button>About Us</Button>
+                <Link>
+                <Button onClick={() => {
+                      navigate("/sale-products");
+                    }}>On Sale</Button>
+                </Link>
+              </li>
+
+              <li className="list-inline-item">
+               <Link>              <Button onClick={() => setIsModalOpen(true)}>Contact</Button>
+               </Link> 
+              {isModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={() => setIsModalOpen(false)}>X</button>
+            <ContactForm />
+          </div>
+        </div>
+      )}
+              </li>
+              <li className="list-inline-item">
+                <Link>
+                <Button onClick={() => {
+                      navigate("/about");
+                    }}>About Us</Button>
                 </Link>
               </li>
             </ul>

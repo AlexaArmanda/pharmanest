@@ -7,6 +7,8 @@ const authRoutes = require("./routes/authRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
+const contactRoutes = require('./routes/contactRoutes');
+
 const app = express();
 app.use(
   cors({
@@ -22,6 +24,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/review", reviewRoutes);
 
+app.use('/api/contact', contactRoutes);
 
 
 module.exports = app;

@@ -21,9 +21,6 @@ const SignUp = () => {
 
   const [message, setMessage] = useState(""); 
 
-  useEffect(() => {
-    context.setisHeaderFooterShown(false);
-  }, [context]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

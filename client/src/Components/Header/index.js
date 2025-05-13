@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { cart } = useCart();
+
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 770);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,10 +38,10 @@ const Header = () => {
 
   return (
     <div className="headerWrapper">
-      <div className="top-strip bg-green">
-        <div className="container-fluid">
+      <div className="top-strip bg-green container">
+        <div className="container">
           <p className="mb-0 mt-0 text-center">
-            Use the code SPRING20 for 20% off your next purchase!
+            Use the code <b>SPRING20</b> for 20% off your next purchase!
           </p>
         </div>
       </div>

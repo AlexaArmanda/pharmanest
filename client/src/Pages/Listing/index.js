@@ -3,20 +3,27 @@ import ProductItem from "../../Components/ProductItem";
 import { useState, useEffect, useCallback } from "react";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation  } from "react-router-dom";
 
 const Listing = () => {
   const [productView, setProductView] = useState("four");
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(8);
   const { categoryId } = useParams();
+  const location = useLocation();
+  const isNewProductsPage = location.pathname === "/new-products";
+  const isSaleProductsPage = location.pathname === "/sale-products";
+  const isClearanceProductsPage = location.pathname === "/clearance-products";
+
+  const isBestSellersPage = location.pathname === "/best-sellers";
+
   const [filteredProducts, setFilteredProducts] = useState([]);
   
-  // Initialize filters
   const [filters, setFilters] = useState({
     brands: [],
     priceRange: [1, 60],
     stock: [],
+    ratings: [],
   });
 
   const applyFilters = useCallback((newFilters) => {
@@ -25,14 +32,31 @@ const Listing = () => {
         brands: newFilters.brands ? [...newFilters.brands] : prevFilters.brands,
         priceRange: newFilters.priceRange || prevFilters.priceRange,
         stock: newFilters.stock !== undefined ? newFilters.stock : prevFilters.stock,
+        ratings: newFilters.ratings || prevFilters.ratings,
     }));
 }, []);
 
+  const handleRatingFilter = (ratings) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      ratings: ratings, 
+    }));
+  };
 
   useEffect(() => {
     const fetchFilteredProducts = async () => {
-      if (!categoryId) return;
-      
+      let url = `http://localhost:5000/api/products/category/${categoryId}`;
+
+      if (isNewProductsPage) {
+        url = "http://localhost:5000/api/products/new";
+      } else if (isSaleProductsPage) {
+        url = "http://localhost:5000/api/products/sale";
+      } else if (isClearanceProductsPage) {
+        url = "http://localhost:5000/api/products/clearance";
+      } else if (isBestSellersPage) {
+        url = "http://localhost:5000/api/products/best-sellers";
+      } else if (categoryId) {
+
       let filterParams = [];
 
 if (filters.brands.length > 0) {
@@ -45,14 +69,20 @@ if (filters.stock) {
     filterParams.push(`stock:${filters.stock}`);
 }
 
-const filtersQuery = filterParams.length > 0 ? filterParams.join(",") : "";
-
-let url = `http://localhost:5000/api/products/category/${categoryId}`;
-if (filtersQuery) {
-    url += `/filtered/${filtersQuery}`;
+if (filters.ratings.length > 0) {
+  filterParams.push(`ratings:${filters.ratings.join("|")}`);
 }
 
-console.log("Fetching products with URL:", url);
+const filtersQuery = filterParams.length > 0 ? filterParams.join(",") : "";
+
+if (filtersQuery) {
+    url += `/filtered/${filtersQuery}`;
+    console.log("Fetching products with URL:", url);
+
+}
+
+    }
+
 
 try {
     const response = await axios.get(url);
@@ -65,13 +95,17 @@ try {
     };
 
     fetchFilteredProducts();
-  }, [categoryId, filters]);
+  }, [categoryId, filters, isNewProductsPage, isSaleProductsPage, isClearanceProductsPage, isBestSellersPage]);
+
+
 
   return (
     <section className="productListingPage">
       <div className="container">
         <div className="productListing d-flex">
-          <Sidebar categoryId={categoryId} applyFilters={applyFilters} />
+        {!isNewProductsPage && !isSaleProductsPage && !isClearanceProductsPage && !isBestSellersPage && (
+            <Sidebar categoryId={categoryId} applyFilters={applyFilters} />
+          )}
           <div className="contentRight">
             <div className="productListing">
               {filteredProducts.length > 0 ? (
